@@ -1,5 +1,4 @@
 import java.util.Arrays;
-
 import sorts.GnomeSort;
 import sorts.MergeSort;
 import sorts.QuickSort;
@@ -9,35 +8,30 @@ import utils.NumberFileGenerator;
 import utils.NumberFileReader;
 
 public class Main {
-
     public static void main(String[] args) {
-
         String filename = "numeros.txt";
-        int[] sizes = {3000, 3000, 3000, 3000, 3000};
-
+        int[] sizes = { 10, 100, 500, 1000, 2000, 3000 };
 
         NumberFileGenerator.generateAndSaveNumbers(filename, 3000);
+        Integer[] todosLosNumeros = NumberFileReader.readNumbersFromFile(filename);
 
-        for (int rep = 0; rep < 20; rep++) {
-            for (int size : sizes) {
+        for (int size : sizes) {
+            System.out.println("\n===== PRUEBA CON " + size + " NUMEROS =====");
 
-            System.out.println("\n===== PRUEBA CON " + size + " NÚMEROS =====");
+            Integer[] datosOriginales = Arrays.copyOf(todosLosNumeros, size);
 
-            Integer[] originalData = NumberFileReader.readNumbersFromFile(filename);
-            Integer[] data = Arrays.copyOf(originalData, size);
+            System.out.println("\n--- DATOS DESORDENADOS ---");
+            testAllSorts(datosOriginales.clone());
 
-            testAllSorts(data.clone(), "Desordenado");
+            Integer[] datosOrdenados = Arrays.copyOf(datosOriginales, size);
+            Arrays.sort(datosOrdenados);
 
-            Arrays.sort(data);
-            testAllSorts(data.clone(), "Ordenado");
-        }
+            System.out.println("\n--- DATOS ORDENADOS ---");
+            testAllSorts(datosOrdenados.clone());
         }
     }
 
-    private static void testAllSorts(Integer[] data, String scenario) {
-
-        System.out.println("\n--- Escenario: " + scenario + " ---");
-
+    private static void testAllSorts(Integer[] data) {
         measure("Gnome Sort", data.clone(), arr -> GnomeSort.sort(arr));
         measure("Selection Sort", data.clone(), arr -> SelectionSort.sort(arr));
         measure("Quick Sort", data.clone(), arr -> QuickSort.sort(arr));
@@ -46,12 +40,10 @@ public class Main {
     }
 
     private static void measure(String name, Integer[] arr, SortAlgorithm algorithm) {
-
         long start = System.nanoTime();
         algorithm.sort(arr);
         long end = System.nanoTime();
-
-        System.out.println(name + " → " + (end - start) + " ns");
+        System.out.println(name + " = " + (end - start) + " ns");
     }
 
     interface SortAlgorithm {
